@@ -1,17 +1,24 @@
-# CleanDXF v1.0
-# Deletes BEND and BEND_EXTENT elements.
+# RGB to ACI table here: https://gohtx.com/acadcolors.php
 
 import ezdxf, sys
 
-if len(sys.argv) < 2: exit() # Exit when no file is specified.
+if len(sys.argv) < 2: exit() # Exit when there is no file
 
-fname = sys.argv[1]
-doc = ezdxf.readfile(fname)
+def main():
 
-msp = doc.modelspace()
+    for filename in sys.argv[1:]:
 
-# Query all lines with layer "BEND", then delete them, then save.
-dimlines = msp.query('*[color==6]')
-for entity in dimlines: msp.delete_entity(entity)
+        doc = ezdxf.readfile(filename)
+        delete_lines(doc) # parse file
 
-doc.save()
+def delete_lines(doc):
+
+    msp = doc.modelspace() # import file's modelspace
+    # Query all lines in Magenta and then delete them
+    dimlines = msp.query('*[color==6]') # 255, 0, 255
+    for entity in dimlines: msp.delete_entity(entity)
+
+    doc.save()
+
+if __name__ == '__main__':
+   main()
